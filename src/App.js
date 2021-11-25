@@ -1,10 +1,11 @@
+import { CampaignsList } from './components/CampaignsList';
 import { Header } from './components/Header';
-import { Button } from 'reactstrap';
 
 function App() {
   return (
     <div>
-      <Header>Hello!</Header>
+      <Header />
+      <CampaignsList></CampaignsList>
     </div>
   );
 }

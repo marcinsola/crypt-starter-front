@@ -7,7 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChainId, DAppProvider } from '@usedapp/core';
 
 const config = {
-  readOnlyChainId: ChainId.Mainnet,
+  readOnlyChainId: ChainId.Rinkeby,
+  readOnlyUrls: {
+    [ChainId.Rinkeby]:
+      'https://eth-rinkeby.alchemyapi.io/v2/hdaxqdkB4k7MYjjKFtoGXwsPjRPftECz',
+  },
 };
 
 ReactDOM.render(

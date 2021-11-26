@@ -1,16 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { ChainId, DAppProvider } from '@usedapp/core';
+const connectionData = require('./utils/connectionData.json');
 
 const config = {
   readOnlyChainId: ChainId.Rinkeby,
   readOnlyUrls: {
     [ChainId.Rinkeby]:
-      'https://eth-rinkeby.alchemyapi.io/v2/hdaxqdkB4k7MYjjKFtoGXwsPjRPftECz',
+      `https://eth-rinkeby.alchemyapi.io/v2/${connectionData.alchemyKey}`,
   },
 };
 

@@ -1,0 +1,7 @@
+{
+    "alchemyKey": "your_app_alchemy_key",
+    "contractAddresses": {
+        "rinkeby": "0xabc123abv123",
+        "kovan": "0xdef456def456"
+    }
+}

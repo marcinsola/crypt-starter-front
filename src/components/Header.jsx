@@ -1,5 +1,5 @@
 import { Navbar, NavbarBrand, Button } from 'reactstrap';
-import { useEthers, useLookupAddress } from '@usedapp/core';
+import { useEthers, useLookupAddress, shortenAddress } from '@usedapp/core';
 export const Header = () => {
   const { account, activateBrowserWallet, deactivate } = useEthers();
   const ens = useLookupAddress();
@@ -10,7 +10,7 @@ export const Header = () => {
         CryptStarter
       </NavbarBrand>
 
-      {account && <strong>Welcome, {ens ?? account}</strong>}
+      {account && <strong>Welcome, {ens ?? shortenAddress(account)}</strong>}
       {!account && (
         <Button color='primary' onClick={activateBrowserWallet}>
           Connect wallet

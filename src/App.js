@@ -8,15 +8,16 @@ const connectionData = require('./utils/connectionData.json');
 function App() {
   const [campaignsList, setCampaignsList] = useState();
 
+  const provider = new ethers.providers.AlchemyProvider('rinkeby');
+  const contract = new ethers.Contract(
+    connectionData.contractAddresses.rinkeby,
+    cryptStarter.abi,
+    provider
+  );
+
   useEffect(() => {
     const retrieveCampaigns = async () => {
       const campaignsList = [];
-      const provider = new ethers.providers.AlchemyProvider('rinkeby');
-      const contract = new ethers.Contract(
-        connectionData.contractAddresses.rinkeby,
-        cryptStarter.abi,
-        provider
-      );
 
       const numberOfCampaignsBN = await contract.getNumberOfCampaigns();
       const numberOfCampaigns = ethers.BigNumber.from(
@@ -42,7 +43,7 @@ function App() {
   return (
     <div>
       <Header />
-      <CampaignsList campaigns={campaignsList ?? []} />
+      <CampaignsList campaigns={campaignsList ?? []} contract={contract} />
     </div>
   );
 }

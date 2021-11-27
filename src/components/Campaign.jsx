@@ -8,6 +8,7 @@ import {
   Button,
   InputGroup,
   Input,
+  Badge,
 } from 'reactstrap';
 import { ethers } from 'ethers';
 import { useEthers } from '@usedapp/core';
@@ -31,28 +32,35 @@ export const Campaign = ({ data, contract }) => {
 
   const getStatusString = (status) => {
     let string;
+    let color;
     switch (status) {
       case CampaignStatus.IN_PROGRESS:
         string = 'In progress';
+        color = 'primary';
         break;
       case CampaignStatus.SUCCESS:
         string = 'Successful';
+        color = 'success';
         break;
       case CampaignStatus.UNSUCCESSFUL:
         string = 'Unsuccessful';
+        color = 'danger';
         break;
       case CampaignStatus.WITHDRAWN:
         string = 'Withdrawn';
+        color = 'warning';
         break;
       default:
         string = "Couldn't retrieve status";
         break;
     }
 
-    return string;
+    return { status: string, type: color };
   };
+
+  const { status, type } = getStatusString(data.status);
   return (
-    <div className='mt-5 gt-5'>
+    <div className='mb-5 gt-5'>
       <Card>
         <CardBody>
           <CardTitle tag='h5'>{data.name}</CardTitle>
@@ -62,7 +70,7 @@ export const Campaign = ({ data, contract }) => {
             {`Created at --_--_-- by ${data.owner}`}
           </CardSubtitle>
           <CardSubtitle className='mb-2 text-muted' tag='h6'>
-            {getStatusString(data.status)}
+            <Badge color={type}>{status}</Badge>
           </CardSubtitle>
           <CardSubtitle className='mb-2 text-muted' tag='h6'>
             {/* @TODO: calculate usd value*/}
@@ -75,10 +83,11 @@ export const Campaign = ({ data, contract }) => {
             {`Ends at: ${new Date(data.deadline * 1000).toString()}`}
           </CardSubtitle>
           <CardSubtitle className='mb-2 text-muted' tag='h6'>
-            {`Total raised: ${ethers.utils.formatEther(data.totalRaised, {
+            {`Total raised: ${data.totalRaised} wei with ${data.totalDonations} donation`}
+            {/* {`Total raised: ${ethers.utils.formatEther(data.totalRaised, {
               commify: true,
               pad: true,
-            })} ETH with ${data.totalDonations} donations`}
+            })} ETH with ${data.totalDonations} donations`} */}
           </CardSubtitle>
           <CardText>
             {/* Here could be a campaign's description stored on IPFS */}
@@ -97,7 +106,7 @@ export const Campaign = ({ data, contract }) => {
             </InputGroup>
           )}
           {!account && (
-            <p className='text-muted'>
+            <p className='text-danger'>
               Connect with your wallet to be able to back this campaign
             </p>
           )}

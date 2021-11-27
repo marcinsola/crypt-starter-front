@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { CampaignsList } from './components/CampaignsList';
 import { Header } from './components/Header';
 import { ethers } from 'ethers';
+import { NewCampaign } from './components/NewCampaign';
+import { Container } from 'reactstrap';
 const cryptStarter = require('./utils/abi/CryptStarter.json');
 const connectionData = require('./utils/connectionData.json');
 
@@ -43,7 +45,10 @@ function App() {
   return (
     <div>
       <Header />
-      <CampaignsList campaigns={campaignsList ?? []} contract={contract} />
+      <Container>
+        <NewCampaign contract={contract} />
+        <CampaignsList campaigns={campaignsList ?? []} contract={contract} />
+      </Container>
     </div>
   );
 }

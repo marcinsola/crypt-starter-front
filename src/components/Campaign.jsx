@@ -9,6 +9,7 @@ import {
   InputGroup,
   Input,
   Badge,
+  Spinner,
 } from 'reactstrap';
 import { ethers } from 'ethers';
 import { useEthers } from '@usedapp/core';
@@ -18,16 +19,36 @@ import { CampaignStatus } from '../utils/CampaignStatus';
 export const Campaign = ({ data, contract }) => {
   const { account, library } = useEthers();
   const [fundingAmount, setFundingAmount] = useState(0);
+  const [fundingInProgress, setFundingInProgress] = useState(false);
+  const [totalDonations, setTotalDonations] = useState(data.totalDonations);
+  const [totalRaised, setTotalRaised] = useState(data.totalRaised);
+
   const handleAmountChange = (e) => {
     setFundingAmount(e.target.value);
   };
 
   const fundCampaign = async (e) => {
-    const index = ethers.BigNumber.from(data.index).toString();
-    const signer = contract.connect(library.getSigner());
-    const tx = await signer.fundCampaign(index, {
-      value: fundingAmount,
-    });
+    setFundingInProgress(true);
+    try {
+      const index = ethers.BigNumber.from(data.index).toString();
+      const signer = contract.connect(library.getSigner());
+      const tx = await signer.fundCampaign(index, {
+        value: fundingAmount,
+      });
+
+      await tx.wait();
+
+      const newState = await contract.campaigns(data.index);
+      setTotalDonations(newState.totalDonations);
+      setTotalRaised(newState.totalRaised);
+      // @TODO: Use modal to confirm transaction success
+      // @TODO: Frontend validation
+      // @TODO: Handle errors
+      setFundingInProgress(false);
+      alert('Campaign successfully funded!');
+    } catch (error) {
+      setFundingInProgress(false);
+    }
   };
 
   const getStatusString = (status) => {
@@ -83,7 +104,9 @@ export const Campaign = ({ data, contract }) => {
             {`Ends at: ${new Date(data.deadline * 1000).toString()}`}
           </CardSubtitle>
           <CardSubtitle className='mb-2 text-muted' tag='h6'>
-            {`Total raised: ${data.totalRaised} wei with ${data.totalDonations} donation`}
+            {`Total raised: ${totalRaised} wei with ${totalDonations} ${
+              totalDonations === 1 ? 'donation' : 'donations'
+            }`}
             {/* {`Total raised: ${ethers.utils.formatEther(data.totalRaised, {
               commify: true,
               pad: true,
@@ -100,8 +123,18 @@ export const Campaign = ({ data, contract }) => {
                 placeholder='Amount in wei'
                 onChange={handleAmountChange}
               />
-              <Button color='primary' onClick={fundCampaign}>
-                Fund this campaign
+              <Button
+                color='primary'
+                onClick={fundCampaign}
+                className={fundingInProgress ? 'disabled' : ''}
+              >
+                {fundingInProgress ? (
+                  <Spinner color='light' size='sm'>
+                    Loading...
+                  </Spinner>
+                ) : (
+                  'Fund this campaign'
+                )}
               </Button>
             </InputGroup>
           )}
